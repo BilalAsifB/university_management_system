@@ -132,7 +132,7 @@ class FeeSummary(db.Model):
     # Relationships
     student = db.relationship("Student", back_populates="fee_summary")
 
-class Departmnent(db.Model):
+class Department(db.Model):
     __tablename__ = 'department'
     dep_id = db.Column(db.Integer, primary_key=True)
     dep_name = db.Column(db.String(100), unique=True, nullable=False)
