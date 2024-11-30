@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv/
+env/
+venv/
+instance/
+
+# VS Code
+.vscode/
+
+# Flask-Specific
+*.log
+*.sqlite3
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Migrations
+migrations/
+
+# Other
+*.bak
+*.swp
+*.tmp
