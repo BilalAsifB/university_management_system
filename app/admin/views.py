@@ -4,9 +4,9 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from . import admin
-from .forms import CourseForm
+from .forms import CourseForm, StudentForm, TeacherForm
 from .. import db
-from ..models import Course
+from ..models import Course, Student, Teacher
 
 def check_admin():
     '''
@@ -15,6 +15,8 @@ def check_admin():
 
     if not current_user.is_admin:
         abort(403)
+
+# Course Views.
 
 @admin.route('/courses', methods=['GET', 'POST'])
 @login_required
@@ -118,3 +120,128 @@ def delete_course(id):
     return redirect(url_for('admin.list_courses'))
 
     return render_template(title="Delete Course")
+
+# Student Views.
+
+@admin.route('/students', methods=['GET', 'POST'])
+@login_required
+def list_students():
+    '''
+    List all students.
+    '''
+
+    check_admin()
+
+    students = Student.query.all()
+
+    return render_template('admin/students/students.html', students=students, title="Students")
+
+@admin.route('/students/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_student(id):
+    '''
+    Edit a student.
+    '''
+
+    check_admin()
+
+    student = Student.query.get_or_404(id)
+    form = StudentForm(obj=student)
+    if form.validate_on_submit():
+        student.department_id = form.department_id.data
+        db.session.commit()
+        flash('You have successfully edited the student.')
+
+        # Reirect to the students page.
+        return redirect(url_for('admin.list_students'))
+    
+    form.department_id.data = student.department_id
+    return render_template(
+        'admin/students/student.html', 
+        action="Edit",
+        form=form,
+        student=student,
+        title="Edit Student"
+    )
+
+@admin.route('/students/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_student(id):
+    '''
+    Delete a student from the database.
+    '''
+
+    check_admin()
+
+    student = Student.query.get_or_404(id)
+    db.session.delete(student)
+    db.session.commit()
+    flash('You have successfully deleted the student.')
+
+    # Redirect to the students page.
+    return redirect(url_for('admin.list_students'))
+
+    return render_template(title="Delete Student")
+
+
+# Teacher Views.
+
+@admin.route('/teachers', methods=['GET', 'POST'])
+@login_required
+def list_teachers():
+    '''
+    List all teachers.
+    '''
+
+    check_admin()
+
+    teachers = Teacher.query.all()
+
+    return render_template('admin/teachers/teachers.html', teachers=teachers, title="Teachers")
+
+@admin.route('/teachers/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_teacher(id):
+    '''
+    Edit a teacher.
+    '''
+
+    check_admin()
+
+    teacher = Teacher.query.get_or_404(id)
+    form = TeacherForm(onj=teacher)
+    if form.validate_on_submit():
+        teacher.speciality = form.speciality.data
+        db.session.commit()
+        flash('You have successfully edited the speciality.')
+
+        # Reirect to the teachers page.
+        return redirect(url_for('admin.list_teachers'))
+    
+    form.speciality.data = teacher.speciality
+    return render_template(
+        'admin/teachers/teacher.html', 
+        action="Edit",
+        form=form,
+        teacher=teacher,
+        title="Edit Teacher"
+    )
+
+@admin.route('/teachers/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_teacher(id):
+    '''
+    Delete a teacher from the database.
+    '''
+
+    check_admin()
+
+    teacher = Teacher.query.get_or_404(id)
+    db.session.delete(teacher)
+    db.session.commit()
+    flash('You have successfully deleted the teacher.')
+
+    # Redirect to the teachers page.
+    return redirect(url_for('admin.list_teachers'))
+
+    return render_template(title="Delete Teacher")

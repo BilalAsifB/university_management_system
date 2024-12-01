@@ -13,6 +13,8 @@ class RegistrationForm(FlaskForm):
 
     email = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
     contact = StringField('Contact', validators=[DataRequired(), Length(min=10, max=15)])
     address = StringField('Address', validators=[DataRequired(), Length(max=200)])
     role = SelectField(
@@ -48,4 +50,3 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
-    

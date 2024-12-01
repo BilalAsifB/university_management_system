@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user
 from .forms import LoginForm, RegistrationForm
 from . import auth
 from .. import db
-from ..models import User
+from ..models import User, Student, Teacher
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -23,6 +23,8 @@ def register():
             email=form.email.data,
             username=form.username.data,
             _password=form.password.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
             contact=form.contact.data,
             address=form.address.data,
             role=form.role.data,
@@ -33,6 +35,26 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Registration successful!')
+
+        if form.role.data == 'Student':
+            student = Student(
+                user_id=user.id,
+                department_id=None
+            )
+
+            # Add student to the database.
+            db.session.add(student)
+            db.session.commit()
+
+        elif form.role.data == 'Teacher':
+            teacher = Teacher(
+                user_id=user.id,
+                speciality=None
+            )
+
+            # Add teacher to the database.
+            db.session.add(teacher)
+            db.session.commit()
 
         # Redirect to the login page.
         return redirect(url_for('auth.login'))

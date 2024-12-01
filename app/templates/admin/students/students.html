@@ -1,0 +1,82 @@
+<!-- app/templates/admin/students/students.html -->>
+
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <br/>
+        {{ utils.flashed_messages() }}
+        <br/>
+        <h1 style="text-align:center;">Students</h1>
+        {% if students %}
+          <hr class="intro-divider">
+          <div class="center">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th width="10%"> Roll No </th>
+                  <th width="20%"> Name </th>
+                  <th width="20%"> Department </th>
+                  <th width="15%"> Enrollments </th>
+                  <th width="15%"> Fees </th>
+                  <th width="15%"> Edit </th>
+                  <th width="15%"> Delete </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for student in students %}
+                <tr>
+                  <td> {{ student.roll_no }} </td>
+                  <td> {{ student.users.first_name }} {{ student.users.last_name }} </td>
+                  <td>
+                    {% if student.department_id %}
+                      {{ student.departments.dep_name }}
+                    {% else %}
+                      Not Assigned
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if student.enrollments %}
+                      {{ student.enrollments|length }}
+                    {% else %}
+                      0
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if student.fees %}
+                      {{ student.fees|length }}
+                    {% else %}
+                      0
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin.edit_student', id=student.roll_no) }}">
+                      <i class="fa fa-pencil"></i> Edit
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin.delete_student', id=student.roll_no) }}" onclick="return confirm('Are you sure you want to delete this student?')">
+                      <i class="fa fa-trash"></i> Delete
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align: center">
+        {% else %}
+          <div style="text-align: center">
+            <h3> No students have been added. </h3>
+            <hr class="intro-divider">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

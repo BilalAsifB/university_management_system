@@ -30,3 +30,8 @@ def admin_dashboard():
         abort(403)
 
     return render_template('home/admin_dashboard.html', title="Dashboard")
+
+# @home.route('/student/dashboard')
+# @login_required
+# def student_dashboard():
+#     pass

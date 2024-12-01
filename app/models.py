@@ -13,6 +13,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False, index=True)
     username = db.Column(db.String(50), unique=True, nullable=False, index=True)
     _password = db.Column(db.String(128), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
     contact = db.Column(db.String(50), unique=True, nullable=False, index=True)
     address = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(100), nullable=False)
@@ -50,8 +52,8 @@ class User(UserMixin, db.Model):
     )
 
     # Relationships
-    students = db.relationship("Student", back_populates="user", uselist=False)
-    teachers = db.relationship("Teacher", back_populates="user", uselist=False)
+    students = db.relationship("Student", back_populates="users", single_parent=True, uselist=False, cascade="all, delete-orphan")
+    teachers = db.relationship("Teacher", back_populates="users", single_parent=True, uselist=False, cascade="all, delete-orphan")
 
 
 # Set up user_loader
@@ -70,14 +72,12 @@ class Student(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('departments.dep_id'))
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-
+    
     # Relationships
-    user = db.relationship("User", back_populates="students")
-    enrollment = db.relationship("Enrollment", back_populates="student", lazy=True)
-    fee = db.relationship("Fee", back_populates="student", lazy=True)
-    department = db.relationship("Department", back_populates="students", lazy=True)
+    users = db.relationship("User", back_populates="students", single_parent=True, cascade="all, delete-orphan")
+    enrollments = db.relationship("Enrollment", back_populates="students", lazy=True, cascade="all, delete-orphan")
+    fees = db.relationship("Fee", back_populates="students", lazy=True, cascade="all, delete-orphan")
+    departments = db.relationship("Department", back_populates="students", lazy=True)
 
     def __repr__(self):
         return f'<Student: {self.first_name}>'
@@ -92,9 +92,7 @@ class Teacher(db.Model):
     teacher_id = db.Column(db.Integer, teacher_id_seq, server_default=teacher_id_seq.next_value(), primary_key=True)
     
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    speciality = db.Column(db.String(50), nullable=False)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
+    speciality = db.Column(db.String(50))
 
     # Check constraints
     __table_args__ = (
@@ -102,8 +100,8 @@ class Teacher(db.Model):
     )
 
     # Relationships
-    user = db.relationship("User", back_populates="teachers")
-    courses = db.relationship("Course", back_populates="teacher", lazy=True)
+    users = db.relationship("User", back_populates="teachers", single_parent=True, uselist=False, cascade="all, delete-orphan")
+    courses = db.relationship("Course", back_populates="teachers", lazy=True)
 
     def __repr__(self):
         return f'<Teacher: {self.first_name}>'
@@ -127,9 +125,9 @@ class Course(db.Model):
     )
 
     # Relationships
-    teacher = db.relationship("Teacher", back_populates="courses", lazy=True)
-    enrollments = db.relationship("Enrollment", back_populates="course", lazy=True)
-    fees = db.relationship("Fee", back_populates="course", lazy=True)
+    teachers = db.relationship("Teacher", back_populates="courses", lazy=True)
+    enrollments = db.relationship("Enrollment", back_populates="courses", lazy=True, cascade="all, delete-orphan")
+    fees = db.relationship("Fee", back_populates="courses", lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Course: {self.course_name}>'
@@ -147,8 +145,8 @@ class Enrollment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
 
     # Relationships
-    student = db.relationship("Student", back_populates="enrollment", lazy=True)
-    course = db.relationship("Course", back_populates="enrollments", lazy=True)
+    students = db.relationship("Student", back_populates="enrollments", lazy=True)
+    courses = db.relationship("Course", back_populates="enrollments", lazy=True)
 
     def __repr__(self):
         return f'<Enrollment: Student {self.student_id}, Course {self.course_id}>'
@@ -160,7 +158,7 @@ class Fee(db.Model):
     '''
     __tablename__ = 'fees'
     fee_id_seq = db.Sequence('fee_id_seq', start=1, increment=1)
-    fee_id = db.Column(db.Integer, db.Sequence('fee_id_seq', start=1, increment=1), primary_key=True)
+    fee_id = db.Column(db.Integer, fee_id_seq, server_default=fee_id_seq.next_value(), primary_key=True)
 
     student_id = db.Column(db.Integer, db.ForeignKey('students.roll_no'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
@@ -173,8 +171,8 @@ class Fee(db.Model):
     )
 
     # Relationships
-    student = db.relationship("Student", back_populates="fee", lazy=True)
-    course = db.relationship("Course", back_populates="fees", lazy=True)
+    students = db.relationship("Student", back_populates="fees", lazy=True)
+    courses = db.relationship("Course", back_populates="fees", lazy=True)
 
     def __repr__(self):
         return f'<Fee: Student {self.student_id}, Course {self.course_id}>'
@@ -196,7 +194,7 @@ class Department(db.Model):
     )
 
     # Relationships
-    students = db.relationship("Student", back_populates="department", lazy=True)
+    students = db.relationship("Student", back_populates="departments", lazy=True)
 
     def __repr__(self):
         return f'<Department: {self.dep_name}>'

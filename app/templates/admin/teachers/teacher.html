@@ -1,0 +1,51 @@
+<!-- app/templates/admin/teachers/teacher.html -->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Teacher
+{% endblock %}
+
+{% block body %}
+<div class="content-section">
+    <div class="outer">
+        <div class="middle">
+            <div class="inner">
+                <div class="center">
+                    <h1>Edit Teacher</h1>
+                    <br/>
+                    {{ wtf.quick_form(form) }}
+                    <br/>
+                    <h3>Assigned Courses</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in teacher.courses %}
+                            <tr>
+                                <td>{{ course.course_name }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.delete_course', course_id=course.course_id) }}" onclick="return confirm('Are you sure you want to delete this course?')">
+                                        <i class="fa fa-trash"></i> Delete Course
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br/>
+                    <h3>Delete Teacher</h3>
+                    <a href="{{ url_for('admin.delete_teacher', id=teacher.teacher_id) }}" onclick="return confirm('Are you sure you want to delete this teacher?')">
+                        <i class="fa fa-trash"></i> Delete Teacher
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
