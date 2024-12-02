@@ -29,8 +29,8 @@
               <tbody>
               {% for teacher in teachers %}
                 <tr>
-                  <td> {{ teacher.teacher_id }} </td> <!-- Updated teacher ID -->
-                  <td> {{ teacher.users.first_name }} {{ teacher.users.last_name }} </td> <!-- Name -->
+                  <td> {{ teacher.teacher_id }} </td> 
+                  <td> {{ teacher.users.first_name }} {{ teacher.users.last_name }} </td> 
                   <td>
                     {% if teacher.speciality %}
                       {{ teacher.speciality }}
@@ -46,12 +46,12 @@
                     {% endif %}
                   </td>
                   <td>
-                    <a href="{{ url_for('admin.edit_teacher', id=teacher.teacher_id) }}"> <!-- Updated route to use teacher_id -->
+                    <a href="{{ url_for('admin.edit_teacher', id=teacher.teacher_id) }}"> 
                       <i class="fa fa-pencil"></i> Edit
                     </a>
                   </td>
                   <td>
-                    <a href="{{ url_for('admin.delete_teacher', id=teacher.teacher_id) }}" onclick="return confirm('Are you sure you want to delete this teacher?')"> <!-- Updated route to use teacher_id -->
+                    <a href="{{ url_for('admin.delete_teacher', id=teacher.teacher_id) }}" onclick="return confirm('Are you sure you want to delete this teacher?')">
                       <i class="fa fa-trash"></i> Delete
                     </a>
                   </td>

@@ -1,0 +1,55 @@
+<!-- app/templates/admin/user_verification/unverified_users.html -->
+
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Unverified Users{% endblock %}
+
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <br/>
+        {{ utils.flashed_messages() }}
+        <br/>
+        <h1 style="text-align:center;">Unverified Users</h1>
+
+        {% if unverified_users %}
+          <hr class="intro-divider">
+          <div class="center">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th width="10%">User ID</th>
+                  <th width="20%">Name</th>
+                  <th width="25%">Email</th>
+                  <th width="15%">Verify</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in unverified_users %}
+                  <tr>
+                    <td>{{ user.id }}</td> 
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      <a href="{{ url_for('admin.verify_user', id=user.id) }}">
+                        <i class="fa fa-check"></i> Verify
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div style="text-align: center">
+            <h3>No unverified users found.</h3>
+            <hr class="intro-divider">
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

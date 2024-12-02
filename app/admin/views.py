@@ -4,9 +4,9 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from . import admin
-from .forms import CourseForm, StudentForm, TeacherForm
+from .forms import CourseForm, StudentForm, TeacherForm,VerifyUserForm
 from .. import db
-from ..models import Course, Student, Teacher
+from ..models import Course, Student, Teacher, User
 
 def check_admin():
     '''
@@ -209,7 +209,7 @@ def edit_teacher(id):
     check_admin()
 
     teacher = Teacher.query.get_or_404(id)
-    form = TeacherForm(onj=teacher)
+    form = TeacherForm(obj=teacher)
     if form.validate_on_submit():
         teacher.speciality = form.speciality.data
         db.session.commit()
@@ -245,3 +245,49 @@ def delete_teacher(id):
     return redirect(url_for('admin.list_teachers'))
 
     return render_template(title="Delete Teacher")
+
+# Verification View.
+
+@admin.route('/unverified_users', methods=['GET', 'POST'])
+@login_required
+def list_unverified_users():
+    '''
+    List all unverified users.
+    '''
+
+    check_admin()
+
+    # Fetch all unverified users.
+    unverified_users = User.query.filter_by(status=False).all()
+    
+    return render_template(
+        'admin/user_verification/unverified_users.html', 
+        unverified_users=unverified_users,
+        title="Unverified Users"
+    )
+
+@admin.route('/unverified_users/verify_user/<int:id>', methods=['GET', 'POST'])
+@login_required
+def verify_user(id):
+    '''
+    Verify a specific user by ID.
+    '''
+
+    check_admin()
+
+    user = User.query.get_or_404(id)
+    form = VerifyUserForm(obj=user)
+    if form.validate_on_submit():
+        user.status = True
+        db.session.commit()
+        flash('User successfully verified.')
+
+        # Redirect to unverified users page.
+        return redirect(url_for('admin.list_unverified_users'))
+    
+    return render_template(
+        'admin/user_verification/verify_user.html',
+        form=form,
+        user=user,
+        title="Verify User"
+    )

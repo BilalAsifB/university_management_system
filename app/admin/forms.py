@@ -1,7 +1,7 @@
 # app/admin/forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField   
+from wtforms import StringField, SubmitField, IntegerField, SelectField   
 from wtforms.validators import DataRequired, ValidationError
 from ..models import Teacher, Department
 
@@ -47,7 +47,7 @@ class TeacherForm(FlaskForm):
 
     speciality_choices = ['CS', 'NS', 'AI', 'EE', 'MG', 'MT']
 
-    speciality = StringField(
+    speciality = SelectField(
         'Speciality', 
         choices=[('CS', 'CS'), ('NS', 'NS'), ('AI', 'AI'), ('EE', 'EE'), ('MG', 'MG'), ('MT', 'MT')],
         validators=[DataRequired()])
@@ -56,4 +56,11 @@ class TeacherForm(FlaskForm):
     def validate_specialifty(self, field):
         if field.data not in self.speciality_choices:
             raise ValidationError('Invalid speciality!')
+        
+class VerifyUserForm(FlaskForm):
+    '''
+    Form for admin to verify a user.
+    '''
+    
+    submit = SubmitField('Verify User')
         

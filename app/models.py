@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     address = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(100), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    status = db.Column(db.Boolean, default=False)
 
     @property
     def password(self):
@@ -198,3 +199,33 @@ class Department(db.Model):
 
     def __repr__(self):
         return f'<Department: {self.dep_name}>'
+
+# class Grade(db.Model):
+#     __tablename__ = 'grade'
+#     grade_id = db.Column(db.Integer, primary_key=True)
+#     enrollment_id = db.Column(db.Integer, db.ForeignKey('enrollment.enrollment_id'))
+#     marks = db.Column(db.Integer)
+#     grade = db.Column(db.String(2))
+    
+#     __table_args__ = (
+#         db.CheckConstraint("marks BETWEEN 1 AND 100", 
+#                            name='check_marks_range'),
+#         db.CheckConstraint("grade IN ('F', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+')",
+#                            NAME='check_grade_valid')
+#     )
+#     # Relationships
+#     enrollment = db.relationship("Enrollment", back_populates="grade", lazy=True)
+
+# class Attendance(db.Model):
+#     __tablename__ = 'attendance'
+#     attendance_id = db.Column(db.Integer, primary_key=True)
+#     enrollment_id = db.Column(db.Integer, db.ForeignKey('enrollment.enrollment_id'))
+#     date = db.Column(db.Date, nullable=False)
+#     status = db.Column(db.String(2), nullable=False)
+#     __table_args__ = (
+#         db.CheckConstraint("status IN ('P', 'A', 'L')", 
+#                            name='check_status_valid'),
+#     )
+    
+#     # Relationships
+#     enrollment = db.relationship("Enrollment", back_populates="attendance", lazy=True)

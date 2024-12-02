@@ -1,0 +1,62 @@
+<!-- app/templates/admin/user_verification/verify_user.html -->
+
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Verify User{% endblock %}
+
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <div class="center">
+          <!-- Display Flashed Messages -->
+          {{ utils.flashed_messages() }}
+
+          <!-- Page Heading -->
+          <h1>Verify User</h1>
+          <br/>
+          {{ wtf.quick_form(form) }}
+          
+          <!-- User Details -->
+          <h3>User Details</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br/>
+
+          <!-- Form for Verification -->
+          <form method="post">
+            {{ form.csrf_token() }}
+            {{ form.hidden_tag() }}
+            <button type="submit" class="btn btn-success">
+              <i class="fa fa-check"></i> Verify User
+            </button>
+          </form>
+          <br/>
+
+          <!-- Back to List -->
+          <a href="{{ url_for('admin.list_unverified_users') }}" class="btn btn-primary">
+            <i class="fa fa-arrow-left"></i> Back to List
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

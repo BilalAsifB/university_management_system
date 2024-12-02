@@ -18,6 +18,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         flag = form.role.data == "Admin"
+        status_flag = not(form.role.data == "Student" or form.role.data == "Teacher")
             
         user = User(
             email=form.email.data,
@@ -28,7 +29,8 @@ def register():
             contact=form.contact.data,
             address=form.address.data,
             role=form.role.data,
-            is_admin=flag
+            is_admin=flag,
+            status=status_flag
         )
 
         # Add user to the database.
@@ -76,7 +78,12 @@ def login():
         # password entered matches the password in the database.
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
-
+            
+            # If the user isn't verified by the admin yet.
+            if not user.status:
+                flash('Your account is pending admin verification. Please wait.')
+                return redirect(url_for('auth.login'))
+            
             # Log user in.
             login_user(user)
 
